@@ -1,0 +1,144 @@
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model Admin {
+  id        String   @id @default(uuid())
+  email     String   @unique
+  password  String
+  createdAt DateTime @default(now())
+}
+
+model Project {
+  id              String   @id @default(uuid())
+  title           String
+  slug            String   @unique
+  shortDesc       String
+  fullDesc        String?
+  client          String?
+  industry        String?
+  category        String?
+  role            String?
+  year            String?
+  duration        String?
+  platform        String?
+  projectUrl      String?
+  thumbnail       String?
+  heroImage       String?
+  gallery         String?  // JSON string array
+  tools           String?  // JSON string array
+  services        String?  // JSON string array
+  results         String?
+  status          String   @default("Draft") // Draft, Published, Archived
+  isFeatured      Boolean  @default(false)
+  order           Int      @default(0)
+  seoTitle        String?
+  seoDesc         String?
+  ogImage         String?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+}
+
+model CaseStudy {
+  id              String   @id @default(uuid())
+  title           String
+  slug            String   @unique
+  shortDesc       String
+  status          String   @default("Draft")
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  
+  caseStudyBlocks CaseStudyBlock[]
+}
+
+model CaseStudyBlock {
+  id          String     @id @default(uuid())
+  caseStudyId String
+  caseStudy   CaseStudy  @relation(fields: [caseStudyId], references: [id], onDelete: Cascade)
+  type        String     // Heading, Paragraph, Image, Gallery, Video, etc.
+  content     String?    // JSON string
+  order       Int        @default(0)
+  isHidden    Boolean    @default(false)
+}
+
+model Experience {
+  id              String   @id @default(uuid())
+  type            String   @default("Experience") // Experience or Freelance
+  company         String
+  position        String
+  startDate       String
+  endDate         String?
+  isCurrent       Boolean  @default(false)
+  description     String?
+  location        String?
+  logo            String?
+  skills          String?  // JSON string array
+  order           Int      @default(0)
+  isPublished     Boolean  @default(true)
+  spansMultiple   Boolean  @default(false)
+}
+
+model Skill {
+  id          String   @id @default(uuid())
+  name        String
+  category    String
+  description String?
+  tools       String?  // JSON string array
+  icon        String?
+  order       Int      @default(0)
+  isVisible   Boolean  @default(true)
+}
+
+model Service {
+  id          String   @id @default(uuid())
+  name        String
+  description String?
+  icon        String?
+  order       Int      @default(0)
+  isVisible   Boolean  @default(true)
+}
+
+model Testimonial {
+  id          String   @id @default(uuid())
+  name        String
+  position    String
+  company     String
+  image       String?
+  content     String
+  isFeatured  Boolean  @default(false)
+  order       Int      @default(0)
+  isPublished Boolean  @default(true)
+}
+
+model ContactMessage {
+  id        String   @id @default(uuid())
+  name      String
+  email     String
+  company   String?
+  subject   String?
+  message   String
+  source    String?
+  status    String   @default("New") // New, Read, Replied, Archived
+  createdAt DateTime @default(now())
+}
+
+model NavigationItem {
+  id          String   @id @default(uuid())
+  label       String
+  destination String?
+  url         String?
+  type        String   // Internal, External, Anchor
+  order       Int      @default(0)
+  isVisible   Boolean  @default(true)
+}
+
+model GlobalSetting {
+  id    String @id @default(uuid())
+  key   String @unique
+  value String // JSON string for Settings (Design, SEO, Homepage, etc)
+}
